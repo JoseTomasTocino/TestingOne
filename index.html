@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.30/css/uikit.min.css" />
+
+    <!-- jQuery is required -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- UIkit JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.30/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.30/js/uikit-icons.min.js"></script>
+</head>
+<body>
+
+  
+    <div id="app" class="uk-container uk-margin-top">
+      <h1 class="uk-heading-divider">
+        Calcular gastos hipoteca
+      </h1>
+      <form class="uk-form-horizontal uk-margin-large">
+
+        <p class="subtitle">
+          Usa el deslizador o escribe el precio del piso.
+        </p>
+        <div class="uk-margin">
+            <label class="uk-form-label">Precio piso</label>
+
+            <div class="uk-form-controls uk-grid-small" uk-grid>
+              <div class="uk-width-1-2@s">
+                <input class="uk-input" type="number" v-model="price">
+              </div>
+              <div class="uk-width-1-2@s">
+                <input type="range" v-model="price" min="100000" max="250000" step="10000" class="uk-width-1-1">  
+              </div>
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label">Importe hipotecable (80%)</label>
+            <div class="uk-form-controls">
+              <div class="uk-input">
+                {{ loanedMoney | formatEuros }}
+              </div>
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label">Importe no hipotecable (20%)</label>
+            <div class="uk-form-controls">
+              <div class="uk-input">
+                {{ notLoanedMoney | formatEuros }}
+              </div>
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label">Gastos de gestión (12%)</label>
+            <div class="uk-form-controls">
+              <div class="uk-input">
+                {{ paperworkMoney | formatEuros }}
+              </div>
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            <label class="uk-form-label"><strong>TOTAL gastos iniciales</strong></label>
+            <div class="uk-form-controls">
+              <div class="uk-input">
+                {{ initialFunds | formatEuros }}
+              </div>
+            </div>
+        </div>
+
+ 
+      </form>
+    </div>
+
+
+
+<script src="https://unpkg.com/numeral"></script>
+<script src="https://unpkg.com/vue"></script>
+<script type="text/javascript">
+
+numeral.register('locale', 'es', {
+    delimiters: {
+        thousands: '.',
+        decimal: ','
+    },
+    abbreviations: {
+        thousand: 'k',
+        million: 'm',
+        billion: 'b',
+        trillion: 't'
+    },
+    currency: {
+        symbol: '€'
+    }
+});
+
+// switch between locales
+numeral.locale('es');
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    price: 150000
+  },
+
+  filters: {
+    formatEuros: function(n) {
+        return numeral(n).format('0,0[.]00 $');
+    }   
+  },
+
+  computed: {
+    loanedMoney: function () {
+        return this.price * 0.8;
+    },
+    notLoanedMoney: function () {
+        return this.price * 0.2;
+    },
+    paperworkMoney: function() {
+        return this.price * 0.12;
+    },
+    initialFunds: function() {
+        return this.notLoanedMoney + this.paperworkMoney;
+    }
+  }
+})  
+
+</script>
+</body>
+</html>
